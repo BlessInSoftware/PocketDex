@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocketdex/themes/palette.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PocketDex',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -22,9 +23,14 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: palette['common']?['bittersweet'],
+        scaffoldBackgroundColor: palette['common']?['anti-flash-white'],
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      darkTheme: ThemeData(
+        primarySwatch: palette['common']?['red-pantone'],
+        scaffoldBackgroundColor: palette['common']?['space-cadet'],
+      ),
+      home: const MyHomePage(title: 'Home'),
     );
   }
 }
