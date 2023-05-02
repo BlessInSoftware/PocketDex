@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:pocketdex/classes/hexcolor.dart';
 
-const colors = {
+const Map<String, Map<String, String>> colors = {
   'common': {
     'space-cadet': '#2B2D42',
     'cool-gray': '#8D99AE',

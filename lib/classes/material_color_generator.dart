@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class MaterialColorGenerator {
-  Color color;
+  final Color color;
 
   MaterialColorGenerator({required this.color});
 
@@ -21,21 +21,20 @@ class MaterialColorGenerator {
     });
   }
 
-  static int tintValue(int value, double factor) =>
-      max(0, min((value + ((255 - value) * factor)).round(), 255));
+  Color shadeColor(Color color, double factor) => Color.fromRGBO(
+      shadeValue(color.red, factor),
+      shadeValue(color.green, factor),
+      shadeValue(color.blue, factor),
+      1);
+  int shadeValue(int value, double factor) =>
+      max(0, min(value - (value * factor).round(), 255));
 
-  static Color tintColor(Color color, double factor) => Color.fromRGBO(
+  Color tintColor(Color color, double factor) => Color.fromRGBO(
       tintValue(color.red, factor),
       tintValue(color.green, factor),
       tintValue(color.blue, factor),
       1);
 
-  static int shadeValue(int value, double factor) =>
-      max(0, min(value - (value * factor).round(), 255));
-
-  static Color shadeColor(Color color, double factor) => Color.fromRGBO(
-      shadeValue(color.red, factor),
-      shadeValue(color.green, factor),
-      shadeValue(color.blue, factor),
-      1);
+  int tintValue(int value, double factor) =>
+      max(0, min((value + ((255 - value) * factor)).round(), 255));
 }
