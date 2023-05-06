@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pocketdex/themes/palette.dart';
 
 final Map<String, ThemeData Function({required BuildContext context})> theme = {
-  'dark': ({required BuildContext context}) {
+  'dark': ({required context}) {
     return ThemeData(
       drawerTheme: DrawerThemeData(
         backgroundColor: palette['common']?['space-cadet'],
@@ -33,7 +33,7 @@ final Map<String, ThemeData Function({required BuildContext context})> theme = {
       ),
     );
   },
-  'light': ({required BuildContext context}) {
+  'light': ({required context}) {
     return ThemeData(
       drawerTheme: DrawerThemeData(
         backgroundColor: palette['common']?['anti-flash-white'],
