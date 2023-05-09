@@ -1,0 +1,165 @@
+name: Flutter build
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🚀 Build app
+        run: flutter build apk
+
+      - name: 🚀 Build app bundle
+        run: flutter build appbundle
+
+      - name: 📤 Upload artifact (AAB)
+        uses: actions/upload-artifact@v2
+        with:
+          name: Android-AAB
+          path: build/app/outputs/bundle/release/*.aab
+
+      - name: 📤 Upload artifact (APK)
+        uses: actions/upload-artifact@v2
+        with:
+          name: Android-APK
+          path: build/app/outputs/flutter-apk/*.apk
+
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🚀 Build app
+        run: flutter build ios --release --no-codesign
+
+      - name: 📤 Upload artifact (APP)
+        uses: actions/upload-artifact@v2
+        with:
+          name: iOS-APP
+          path: build/ios/iphoneos/*.app
+
+      - name: 📤 Upload artifact (IPA)
+        uses: actions/upload-artifact@v2
+        with:
+          name: iOS-IPA
+          path: build/ios/iphoneos/*.ipa
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🔄️ Update Linux
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev
+
+      - name: 🚀 Build app
+        run: flutter build linux
+
+      - name: 📤 Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux
+          path: build/linux/x64/release/bundle/**/*
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🚀 Build app
+        run: flutter build macos
+
+      - name: 📤 Upload artifact (APP)
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS-APP
+          path: build/macos/Build/Products/Release/*.app
+
+  build-web:
+    name: Build web
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🚀 Build app
+        run: flutter build web
+
+      - name: 📤 Upload web artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Web
+          path: build/web
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: 🏗️ Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🚀 Build app
+        run: flutter build windows
+
+      - name: 📤 Upload artifact (EXE)
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows-EXE
+          path: build/windows/runner/Release/**/*
