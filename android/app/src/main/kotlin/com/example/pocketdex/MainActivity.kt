@@ -1,4 +1,4 @@
-package com.example.pocketdex
+package com.blessinsoftware.pocketdex
 
 import io.flutter.embedding.android.FlutterActivity
 

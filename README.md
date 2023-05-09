@@ -1,4 +1,4 @@
-# pocketdex
+# PocketDex
 
 A new Flutter project.
 

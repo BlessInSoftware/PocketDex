@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pocketdex">
+    package="com.blessinsoftware.pocketdex">
    <application
-        android:label="pocketdex"
+        android:label="PocketDex"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
