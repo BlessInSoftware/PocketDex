@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:pokeapi/model/pokemon/pokemon.dart';
+import 'package:pokeapi/pokeapi.dart';
 
-import 'package:pocketdex/classes/theme_mode_notifier.dart';
 import 'package:pocketdex/constants/pages.dart';
+import 'package:pocketdex/widgets/cards/pokemon.dart';
 import 'package:pocketdex/widgets/buttons/floating.dart';
 import 'package:pocketdex/widgets/drawers/default.dart';
 
@@ -14,22 +15,82 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<Pokemon> _pokemons = [];
+  final scrollController = ScrollController();
+  bool isLimit = false;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPokemons();
+    handleScroll();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchPokemons() async {
+    try {
+      _pokemons.addAll(
+          (await PokeAPI.getObjectList<Pokemon>(_pokemons.length + 1, 10))
+              .whereType<Pokemon>());
+    } catch (e) {
+      setState(() {
+        isLimit = true;
+      });
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> handleScroll() async {
+    scrollController.addListener(() async {
+      if (scrollController.position.maxScrollExtent ==
+              scrollController.offset &&
+          !isLoading) {
+        setState(() {
+          isLoading = true;
+        });
+        _fetchPokemons();
+        setState(() {
+          isLoading = true;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppPage.home.pageName),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Theme: ${Provider.of<ThemeModeNotifier>(context).themeMode.name}',
+      body: _pokemons.isNotEmpty
+          ? ListView.builder(
+              controller: scrollController,
+              itemCount: _pokemons.length + 1,
+              itemBuilder: (context, index) {
+                if (index < _pokemons.length) {
+                  return PokemonCard(pokemon: _pokemons[index]);
+                } else if (!isLimit) {
+                  return const Card(
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Center(child: CircularProgressIndicator())),
+                  );
+                } else {
+                  return null;
+                }
+              },
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
-        ),
-      ),
       drawer: const DefaultDrawer(),
       floatingActionButton: const FloatingButton(),
     );
