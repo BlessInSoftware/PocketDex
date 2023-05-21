@@ -33,9 +33,10 @@ const Map<String, Map<String, String>> colors = {
   }
 };
 
-final convertedColors =
-    Map<String, Map<String, Color>>.from(colors.map((key, value) {
-  return MapEntry(key, Map<String, Color>.from(value.map((k, v) {
-    return MapEntry(k, HexColor(color: v).toColor());
+final convertedColors = Map<String, Map<String, Color>>.from(
+    colors.map((stringColorCategoryList, stringColorList) {
+  return MapEntry(stringColorCategoryList, Map<String, Color>.from(
+      stringColorList.map((stringColorName, stringColor) {
+    return MapEntry(stringColorName, HexColor(color: stringColor).toColor());
   })));
 }));

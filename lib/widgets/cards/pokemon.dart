@@ -2,8 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:pokeapi/model/pokemon/pokemon.dart';
 
+import 'package:pocketdex/classes/color_maker.dart';
 import 'package:pocketdex/themes/palette.dart';
-import 'package:pocketdex/classes/color_combiner.dart';
 
 const Map<String, int> colorsShade = {
   'id': 900,
@@ -21,7 +21,7 @@ class PokemonCard extends StatelessWidget {
   });
 
   MaterialColor combineTypesColors() {
-    return ColorCombine.multipleMaterialColors(
+    return ColorMaker.combineMultipleMaterialColor(
         materialColors: pokemon.types!
             .map((type) => palette['types']?[type.type!.name])
             .toList());
