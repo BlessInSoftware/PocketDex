@@ -5,6 +5,9 @@ import 'package:pocketdex/themes/palette.dart';
 final Map<String, ThemeData Function({required BuildContext context})> theme = {
   'dark': ({required context}) {
     return ThemeData(
+      cardTheme: CardTheme(
+        color: palette['common']?['space-cadet']?.shade900,
+      ),
       drawerTheme: DrawerThemeData(
         backgroundColor: palette['common']?['space-cadet'],
       ),
@@ -35,6 +38,9 @@ final Map<String, ThemeData Function({required BuildContext context})> theme = {
   },
   'light': ({required context}) {
     return ThemeData(
+      cardTheme: CardTheme(
+        color: palette['common']?['anti-flash-white']?.shade50,
+      ),
       drawerTheme: DrawerThemeData(
         backgroundColor: palette['common']?['anti-flash-white'],
       ),
