@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocketdex/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,9 +35,6 @@ class App extends StatefulWidget {
 
   @override
   State<App> createState() => _AppState();
-
-  // static MyAppState? of(BuildContext context) =>
-  //     context.findAncestorStateOfType<MyAppState>();
 }
 
 class _AppState extends State<App> {
@@ -44,7 +42,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       darkTheme: theme['dark']!(context: context),
-      home: Provider.of<SelectPageNotifier>(context).selectedPage.page,
+      home: const HomePage(),
       theme: theme['light']!(context: context),
       themeMode: Provider.of<ThemeModeNotifier>(context).themeMode,
       title: 'PocketDex',

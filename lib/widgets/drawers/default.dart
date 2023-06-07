@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pocketdex/pages/home.dart';
+import 'package:pocketdex/pages/settings.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pocketdex/classes/create_animated_route.dart';
@@ -56,7 +58,7 @@ class _DefaultDrawerState extends State<DefaultDrawer> {
                     Navigator.pushReplacement(
                       context,
                       CreateAnimatedRoute(
-                        page: AppPage.home.page,
+                        page: const HomePage(),
                       ).slideHorizontally(),
                     );
                   },
@@ -74,7 +76,7 @@ class _DefaultDrawerState extends State<DefaultDrawer> {
                     Navigator.pushReplacement(
                       context,
                       CreateAnimatedRoute(
-                        page: AppPage.settings.page,
+                        page: const SettingsPage(),
                       ).slideHorizontally(),
                     );
                   },
