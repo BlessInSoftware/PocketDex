@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:pokeapi/model/pokemon/pokemon.dart';
+import 'package:pokedex/pokedex.dart';
 
 import 'package:pocketdex/classes/color_maker.dart';
 import 'package:pocketdex/themes/palette.dart';
@@ -22,9 +22,16 @@ class PokemonCard extends StatelessWidget {
 
   MaterialColor combineTypesColors() {
     return ColorMaker.combineMultipleMaterialColor(
-        materialColors: pokemon.types!
-            .map((type) => palette['types']?[type.type!.name])
+        materialColors: pokemon.types
+            .map((type) => palette['types']?[type.type.name])
             .toList());
+  }
+
+  MaterialColor combineCardAndTypesColors(BuildContext context) {
+    return ColorMaker.combineMultipleMaterialColor(materialColors: [
+      ColorMaker.toMaterialColor(color: Theme.of(context).cardTheme.color),
+      combineTypesColors()
+    ], dominance: 0.2);
   }
 
   Color? getTextColor(Color? backgroundColor) {
@@ -41,6 +48,7 @@ class PokemonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: combineCardAndTypesColors(context),
       child: Row(
         children: [
           Expanded(
@@ -55,9 +63,7 @@ class PokemonCard extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: pokemon.types != null
-                                ? (combineTypesColors())[colorsShade['id']!]
-                                : null,
+                            color: (combineTypesColors())[colorsShade['id']!],
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(5),
                               bottomLeft: Radius.circular(5),
@@ -65,13 +71,10 @@ class PokemonCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              pokemon.id!.toString(),
+                              pokemon.id.toString(),
                               style: TextStyle(
                                 color: getTextColor(
-                                  pokemon.types != null
-                                      ? (combineTypesColors())[
-                                          colorsShade['id']!]
-                                      : null,
+                                  (combineTypesColors())[colorsShade['id']!],
                                 ),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -83,9 +86,7 @@ class PokemonCard extends StatelessWidget {
                         flex: 3,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: pokemon.types != null
-                                ? (combineTypesColors())[colorsShade['name']!]
-                                : null,
+                            color: (combineTypesColors())[colorsShade['name']!],
                             borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(5),
                               bottomRight: Radius.circular(5),
@@ -93,13 +94,10 @@ class PokemonCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              '${pokemon.name?[0].toUpperCase()}${pokemon.name?.substring(1)}',
+                              '${pokemon.name[0].toUpperCase()}${pokemon.name.substring(1)}',
                               style: TextStyle(
                                 color: getTextColor(
-                                  pokemon.types != null
-                                      ? (combineTypesColors())[
-                                          colorsShade['name']!]
-                                      : null,
+                                  (combineTypesColors())[colorsShade['name']!],
                                 ),
                               ),
                             ),
@@ -112,48 +110,37 @@ class PokemonCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: Row(
-                    children: pokemon.types != null
-                        ? pokemon.types!
-                            .map(
-                              (type) => Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: type == pokemon.types!.first
-                                          ? 0
-                                          : 2.5,
-                                      right: type == pokemon.types!.last
-                                          ? 0
-                                          : 2.5),
-                                  child: type.type?.name != null
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            color: (palette['types']?[type.type!
-                                                .name])?[colorsShade['type']!],
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(5)),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              type.type!.name![0]
-                                                      .toUpperCase() +
-                                                  type.type!.name!.substring(1),
-                                              style: TextStyle(
-                                                color: getTextColor(
-                                                  (palette['types']
-                                                          ?[type.type!.name])?[
-                                                      colorsShade['type']!],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : null,
+                    children: pokemon.types
+                        .map(
+                          (type) => Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: type == pokemon.types.first ? 0 : 2.5,
+                                  right: type == pokemon.types.last ? 0 : 2.5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: (palette['types']
+                                      ?[type.type.name])?[colorsShade['type']!],
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(5)),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    type.type.name[0].toUpperCase() +
+                                        type.type.name.substring(1),
+                                    style: TextStyle(
+                                      color: getTextColor(
+                                        (palette['types']?[type.type.name])?[
+                                            colorsShade['type']!],
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            )
-                            .toList()
-                        : [],
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
               ],
@@ -182,38 +169,34 @@ class PokemonCard extends StatelessWidget {
                             child: Icon(
                               Icons.catching_pokemon,
                               size: iconSize,
-                              color: pokemon.types != null
-                                  ? (combineTypesColors())[
-                                      colorsShade['sprite']!]
-                                  : null,
+                              color: (combineTypesColors())[
+                                  colorsShade['sprite']!],
                             ),
                           );
                         },
                       ),
                       Center(
-                        child: pokemon.sprites != null
-                            ? CarouselSlider(
-                                options: CarouselOptions(
-                                  aspectRatio: 1,
-                                  viewportFraction: 1,
-                                  enlargeCenterPage: true,
-                                  enableInfiniteScroll: false,
-                                  enlargeFactor: 2,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            aspectRatio: 1,
+                            viewportFraction: 1,
+                            enlargeCenterPage: true,
+                            enableInfiniteScroll: false,
+                            enlargeFactor: 2,
+                          ),
+                          items: [
+                            pokemon.sprites.frontDefault,
+                            pokemon.sprites.backDefault
+                          ]
+                              .whereType<String>()
+                              .map(
+                                (sprite) => Image.network(
+                                  sprite,
+                                  fit: BoxFit.contain,
                                 ),
-                                items: [
-                                  pokemon.sprites!.frontDefault,
-                                  pokemon.sprites!.backDefault
-                                ]
-                                    .whereType<String>()
-                                    .map(
-                                      (sprite) => Image.network(
-                                        sprite,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    )
-                                    .toList(),
                               )
-                            : null,
+                              .toList(),
+                        ),
                       )
                     ],
                   ),

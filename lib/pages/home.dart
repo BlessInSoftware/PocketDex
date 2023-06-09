@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokeapi/model/pokemon/pokemon.dart';
-import 'package:pokeapi/pokeapi.dart';
+import 'package:pokedex/pokedex.dart';
 
 import 'package:pocketdex/constants/pages.dart';
 import 'package:pocketdex/widgets/cards/pokemon.dart';
@@ -35,9 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchPokemons() async {
     try {
-      _pokemons.addAll(
-          (await PokeAPI.getObjectList<Pokemon>(_pokemons.length + 1, 10))
-              .whereType<Pokemon>());
+      _pokemons.addAll((await Future.wait((await Pokedex()
+                  .pokemon
+                  .getPage(offset: _pokemons.length, limit: 10))
+              .results
+              .map((partialPokemon) =>
+                  Pokedex().pokemon.get(name: partialPokemon.name))))
+          .whereType<Pokemon>());
     } catch (e) {
       setState(() {
         isLimit = true;
@@ -76,7 +79,10 @@ class _HomePageState extends State<HomePage> {
               itemCount: _pokemons.length + 1,
               itemBuilder: (context, index) {
                 if (index < _pokemons.length) {
-                  return PokemonCard(pokemon: _pokemons[index]);
+                  return InkWell(
+                    child: PokemonCard(pokemon: _pokemons[index]),
+                    onTap: () {},
+                  );
                 } else if (!isLimit) {
                   return const Card(
                     child: Padding(
