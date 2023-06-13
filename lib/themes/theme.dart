@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
+import 'package:pocketdex/classes/theme_mode_notifier.dart';
 import 'package:pocketdex/themes/palette.dart';
 
 final Map<String, ThemeData Function({required BuildContext context})> theme = {
@@ -71,3 +74,35 @@ final Map<String, ThemeData Function({required BuildContext context})> theme = {
     );
   }
 };
+
+ThemeData searchDelegateTheme(BuildContext context) {
+  final ThemeData theme = Theme.of(context);
+  final ThemeMode themeMode =
+      Provider.of<ThemeModeNotifier>(context).themeMode != ThemeMode.system
+          ? Provider.of<ThemeModeNotifier>(context).themeMode
+          : MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? ThemeMode.dark
+              : ThemeMode.light;
+  return theme.copyWith(
+    appBarTheme: AppBarTheme(
+      systemOverlayStyle: themeMode == ThemeMode.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
+      backgroundColor: themeMode == ThemeMode.dark
+          ? (palette['common']?['space-cadet']?[900])
+          : (palette['common']?['anti-flash-white']?[700]),
+      iconTheme: theme.primaryIconTheme.copyWith(
+        color: themeMode == ThemeMode.dark
+            ? (palette['common']?['anti-flash-white'])
+            : (palette['common']?['space-cadet']),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      hintStyle: TextStyle(
+        color: themeMode == ThemeMode.dark
+            ? (palette['common']?['anti-flash-white']?[900])
+            : (palette['common']?['space-cadet']?[400]),
+      ),
+    ),
+  );
+}

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokedex.dart';
 
+import 'package:pocketdex/classes/create_animated_route.dart';
 import 'package:pocketdex/constants/pages.dart';
-import 'package:pocketdex/widgets/cards/pokemon.dart';
+import 'package:pocketdex/pages/pokemon.dart';
 import 'package:pocketdex/widgets/buttons/floating.dart';
+import 'package:pocketdex/widgets/cards/pokemon.dart';
 import 'package:pocketdex/widgets/drawers/default.dart';
+import 'package:pocketdex/widgets/searchers/pokemon.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -71,6 +74,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                showSearch(context: context, delegate: PokemonSearchDelegate());
+              },
+              icon: const Icon(Icons.search))
+        ],
         title: Text(AppPage.home.pageName),
       ),
       body: _pokemons.isNotEmpty
@@ -81,7 +91,15 @@ class _HomePageState extends State<HomePage> {
                 if (index < _pokemons.length) {
                   return InkWell(
                     child: PokemonCard(pokemon: _pokemons[index]),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CreateAnimatedRoute(
+                          page: PokemonPage(
+                              partialPokemon: _pokemons[index].name),
+                        ).slideVertically(),
+                      );
+                    },
                   );
                 } else if (!isLimit) {
                   return const Card(
