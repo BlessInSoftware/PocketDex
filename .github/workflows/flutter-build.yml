@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+  release:
+    types:
+      - published
   workflow_dispatch:
 
 jobs:
@@ -14,10 +17,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 🏗️ Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: zulu
+          java-version: 11
 
       - name: 🏗️ Setup Flutter
         uses: subosito/flutter-action@v2
@@ -31,17 +34,53 @@ jobs:
       - name: 🚀 Build app bundle
         run: flutter build appbundle
 
+      - name: 🗃️ Compress build folder (AAB)
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
+        with:
+          filename: build.zip
+          directory: build/app/outputs/bundle/release
+          type: zip
+
+      - name: 🗃️ Compress build folder (APK)
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
+        with:
+          filename: build.zip
+          directory: build/app/outputs/flutter-apk
+          type: zip
+
+      - name: 📤 Upload asset (AAB)
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: Android-AAB.zip
+          file: build/app/outputs/bundle/release/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload asset (APK)
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: Android-APK.zip
+          file: build/app/outputs/flutter-apk/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 📤 Upload artifact (AAB)
-        uses: actions/upload-artifact@v2
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
         with:
           name: Android-AAB
-          path: build/app/outputs/bundle/release/*.aab
+          path: build/app/outputs/bundle/release
 
       - name: 📤 Upload artifact (APK)
-        uses: actions/upload-artifact@v2
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
         with:
           name: Android-APK
-          path: build/app/outputs/flutter-apk/*.apk
+          path: build/app/outputs/flutter-apk
 
   build-ios:
     name: Build iOS
@@ -59,17 +98,29 @@ jobs:
       - name: 🚀 Build app
         run: flutter build ios --release --no-codesign
 
-      - name: 📤 Upload artifact (APP)
-        uses: actions/upload-artifact@v2
+      - name: 🗃️ Compress build folder
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
         with:
-          name: iOS-APP
-          path: build/ios/iphoneos/*.app
+          filename: build.zip
+          directory: build/ios/iphoneos
+          type: zip
 
-      - name: 📤 Upload artifact (IPA)
-        uses: actions/upload-artifact@v2
+      - name: 📤 Upload release
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: iOS-IPA
-          path: build/ios/iphoneos/*.ipa
+          asset_name: iOS.zip
+          file: build/ios/iphoneos/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: iOS
+          path: build/ios/iphoneos
 
   build-linux:
     name: Build Linux
@@ -92,11 +143,29 @@ jobs:
       - name: 🚀 Build app
         run: flutter build linux
 
+      - name: 🗃️ Compress build folder
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
+        with:
+          filename: build.zip
+          directory: build/linux/x64/release/bundle
+          type: zip
+
+      - name: 📤 Upload release
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: Linux.zip
+          file: build/linux/x64/release/bundle/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 📤 Upload artifact
-        uses: actions/upload-artifact@v2
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
         with:
           name: Linux
-          path: build/linux/x64/release/bundle/**/*
+          path: build/linux/x64/release/bundle
 
   build-macos:
     name: Build macOS
@@ -114,11 +183,29 @@ jobs:
       - name: 🚀 Build app
         run: flutter build macos
 
-      - name: 📤 Upload artifact (APP)
-        uses: actions/upload-artifact@v2
+      - name: 🗃️ Compress build folder
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
         with:
-          name: macOS-APP
-          path: build/macos/Build/Products/Release/*.app
+          filename: build.zip
+          directory: build/macos/Build/Products/Release
+          type: zip
+
+      - name: 📤 Upload asset
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: macOS.zip
+          file: build/macos/Build/Products/Release/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS
+          path: build/macos/Build/Products/Release
 
   build-web:
     name: Build web
@@ -136,8 +223,26 @@ jobs:
       - name: 🚀 Build app
         run: flutter build web
 
-      - name: 📤 Upload web artifact
-        uses: actions/upload-artifact@v2
+      - name: 🗃️ Compress build folder
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
+        with:
+          filename: build.zip
+          directory: build/web
+          type: zip
+
+      - name: 📤 Upload asset
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: Web.zip
+          file: build/web/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
         with:
           name: Web
           path: build/web
@@ -158,8 +263,26 @@ jobs:
       - name: 🚀 Build app
         run: flutter build windows
 
-      - name: 📤 Upload artifact (EXE)
-        uses: actions/upload-artifact@v2
+      - name: 🗃️ Compress build folder
+        if: github.event_name == 'release'
+        uses: TheDoctor0/zip-release@master
         with:
-          name: Windows-EXE
-          path: build/windows/runner/Release/**/*
+          filename: build.zip
+          directory: build/windows/runner/Release
+          type: zip
+
+      - name: 📤 Upload asset
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          asset_name: Windows.zip
+          file: build/windows/runner/Release/build.zip
+          overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Windows
+          path: build/windows/runner/Release
