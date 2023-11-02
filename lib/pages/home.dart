@@ -89,18 +89,17 @@ class _HomePageState extends State<HomePage> {
               itemCount: _pokemons.length + 1,
               itemBuilder: (context, index) {
                 if (index < _pokemons.length) {
-                  return InkWell(
-                    child: PokemonCard(pokemon: _pokemons[index]),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        CreateAnimatedRoute(
-                          page: PokemonPage(
-                              partialPokemon: _pokemons[index].name),
-                        ).slideVertically(),
-                      );
-                    },
-                  );
+                  return PokemonCard(
+                      pokemon: _pokemons[index],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CreateAnimatedRoute(
+                            page: PokemonPage(
+                                partialPokemon: _pokemons[index].name),
+                          ).slideVertically(),
+                        );
+                      });
                 } else if (!isLimit) {
                   return const Card(
                     child: Padding(
